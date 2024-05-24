@@ -46,10 +46,10 @@ def read_root():
 #     # Implementación para cargar el dataset Parquet desde el archivo
 #     pass
 
-from fastapi import FastAPI, HTTPException
-import pandas as pd
+# from fastapi import FastAPI, HTTPException
+# import pandas as pd
 
-app = FastAPI()
+# app = FastAPI()
 
 # Función para cargar y devolver el dataset Parquet
 def load_dataset(dataset_id: int):
