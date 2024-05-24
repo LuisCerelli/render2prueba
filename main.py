@@ -8,12 +8,40 @@ app = FastAPI()
 def read_root():
     return {"message": "Hello, World!"}
 
+# @app.get("/data/{dataset_id}")
+# def get_data(dataset_id: int):
+#     # Validar el id del dataset
+#     if dataset_id < 0 or dataset_id > 2:
+#         return {"error": "Invalid dataset_id. Must be 0, 1, or 2."}
+    
+#     # Cargar el dataset Parquet correspondiente
+#     df = pd.read_parquet(f"data_{dataset_id}.parquet")
+#     return df.to_dict(orient="records")
+# # ¿Qué hace el código anterior?
+# # R: Define una API con FastAPI que permite acceder a tres datasets Parquet de 2 MB cada uno.
+
+from fastapi import Depends, FastAPI, HTTPException, status
+from typing import Dict
+
+# Ejemplo de almacenamiento en memoria para los datasets
+datasets_cache: Dict[int, dict] = {}
+
 @app.get("/data/{dataset_id}")
 def get_data(dataset_id: int):
-    # Validar el id del dataset
+    # Verificar que el dataset_id esté dentro del rango esperado
     if dataset_id < 0 or dataset_id > 2:
         return {"error": "Invalid dataset_id. Must be 0, 1, or 2."}
     
-    # Cargar el dataset Parquet correspondiente
-    df = pd.read_parquet(f"data_{dataset_id}.parquet")
-    return df.to_dict(orient="records")
+    # Verificar si los datos del dataset ya están en caché
+    if dataset_id in datasets_cache:
+        return datasets_cache[dataset_id]
+    
+    # Cargar el dataset Parquet correspondiente y almacenarlo en caché
+    df = load_dataset(dataset_id)
+    dataset_dict = df.to_dict(orient="records")
+    datasets_cache[dataset_id] = dataset_dict
+    return dataset_dict
+
+def load_dataset(dataset_id: int):
+    # Implementación para cargar el dataset Parquet desde el archivo
+    pass
